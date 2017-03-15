@@ -10,11 +10,16 @@
       paths:
         - ../vars
 
-- include_vars: group_vars/cloudera
-  when: distro == "cdh"
-
 - include_vars: group_vars/hortonworks
   when: distro == "hdp"
+
+- name: Install libselinux-python required for ansible
+  yum:
+    name: libselinux-python
+    state: present
+    update_cache: yes
+  ignore_errors: true
+  when: ansible_os_family == "RedHat"
 
 - name: Install epel-release
   yum:
@@ -31,6 +36,9 @@
     state: present
   when: ansible_os_family == "RedHat" and epel_result|failed
 
+- name: Configure EPEL repo without mirrors
+  template: src=epel.repo.j2 dest=/etc/yum.repos.d/epel.repo
+
 - name: Ensure required packages are installed (yum)
   yum:
     name: "{{ item }}"
@@ -38,36 +46,6 @@
     state: installed
   with_items: "{{ packages|default([]) }}"
   when: ansible_os_family == "RedHat"
-
-- name: Ensure required packages are installed (apt)
-  apt:
-    name: "{{ item }}"
-    update_cache: yes
-    state: installed
-  with_items: "{{ packages|default([]) }}"
-  when: ansible_os_family == "Debian"
-
-- name: Upgrade all packages (yum)
-  yum: name=* state=latest
-  when: ansible_os_family == "RedHat"
-
-- name: Upgrade all packages (apt)
-  apt: upgrade=dist
-  when: ansible_os_family == "Debian"
-
-- name: Make sure the NTP service is stopped
-  service: name={{ ntp_service }} state=stopped
-
-- name: Force NTP sync
-  command: "{{ ntp_sync }}"
-
-- name: Start the NTP service
-  service: name={{ ntp_service }} state=started enabled=yes
-
-- name: Disable MySQL skip-name-resolve if present
-  lineinfile: dest=/etc/my.cnf
-              regexp="^skip[-_]name[-_]resolve"
-              state=absent
 
 - name: Set nofile limits
   lineinfile: dest=/etc/security/limits.conf
