@@ -1,10 +1,10 @@
 [master-nodes]
-master01 ansible_host=192.168.0.2 bond_ip=172.16.0.2 ansible_user=rack ansible_ssh_pass=changeme
-#master02 ansible_host=192.168.0.2 bond_ip=172.16.0.2 ansible_user=root ansible_ssh_pass=changeme
+c6401 ansible_host=c6401.ambari.apache.org bond_ip=192.168.64.101 ansible_user=vagrant
 
 [slave-nodes]
-slave01 ansible_host=192.168.0.3 bond_ip=172.16.0.3 ansible_user=rack ansible_ssh_pass=changeme
-slave02 ansible_host=192.168.0.4 bond_ip=172.16.0.4 ansible_user=rack ansible_ssh_pass=changeme
+c6402 ansible_host=c6402.ambari.apache.org bond_ip=192.168.64.102 ansible_user=vagrant
+c6403 ansible_host=c6403.ambari.apache.org bond_ip=192.168.64.103 ansible_user=vagrant
+
 
 [edge-nodes]
 #edge01 ansible_host=192.168.0.5 bond_ip=172.16.0.5 ansible_user=rack ansible_ssh_pass=changeme

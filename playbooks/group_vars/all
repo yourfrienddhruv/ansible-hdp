@@ -1,5 +1,5 @@
 ---
-cluster_name: 'hadoopPOC'
+cluster_name: 'DRS'
 #valid hdp/cdh
 distro: 'hdp'
 use_dns: false
