@@ -75,9 +75,6 @@
         "dfs.datanode.data.dir" : "{% for disk in hostvars[groups['slave-nodes'][0]]['ansible_mounts'] if disk.mount | match("/grid/*") %}{{ disk.mount }}/hadoop/hdfs/data{% if not loop.last %},{% endif %}{% else %}/hadoop/hdfs/data{%- endfor %}",
         "dfs.datanode.balance.bandwidthPerSec" : "{{ hostvars['localhost']['hdfs_site']['dfs_datanode_balance_bandwidthPerSec'] }}",
         "dfs.datanode.max.transfer.threads": "{{ hostvars['localhost']['hdfs_site']['dfs_datanode_max_transfer_threads'] }}",
-        {% if arcadia == true -%}
-        "dfs.datanode.hdfs-blocks-metadata.enabled" : "true",
-        {% endif -%}
         "dfs.journalnode.edits.dir": "{% for disk in hostvars[groups['master-nodes'][0]]['ansible_mounts'] if disk.mount | match("/hadoop/nn/*") %}/hadoop/nn/hdfs/journalnode{% if not loop.last %},{% endif %}{% else %}/hadoop/hdfs/journalnode{%- endfor %}",
         "dfs.namenode.checkpoint.dir": "{% for disk in hostvars[groups['master-nodes'][0]]['ansible_mounts'] if disk.mount | match("/hadoop/nn/*") %}/hadoop/nn/hdfs/namenodesecondary{% if not loop.last %},{% endif %}{% else %}/hadoop/hdfs/namenodesecondary{%- endfor %}",
         "dfs.namenode.name.dir": "{% for disk in hostvars[groups['master-nodes'][0]]['ansible_mounts'] if disk.mount | match("/hadoop/nn/*") %}/hadoop/nn/hdfs/namenode{% if not loop.last %},{% endif %}{% else %}/hadoop/hdfs/namenode{%- endfor %}",
@@ -330,17 +327,6 @@
           "name" : "KAFKA_BROKER"
         },
         {% endif -%}
-        {% if arcadia == true -%}
-        {
-          "name" : "ARCENGINE_STATESTORE"
-        },
-        {
-          "name" : "ARCVIZ"
-        },
-        {
-          "name" : "ARCENGINE_CATALOG"
-        },
-        {% endif -%}
         {% if  ambari_version >= "2.2.2" -%}
         {
           "name" : "METRICS_MONITOR"
@@ -420,11 +406,6 @@
         {% if install_hbase == true -%}
         {
           "name" : "HBASE_REGIONSERVER"
-        },
-        {% endif -%}
-        {% if arcadia == true -%}
-        {
-          "name" : "ARCENGINE"
         },
         {% endif -%}
         {% if  ambari_version >= "2.2.2" -%}
