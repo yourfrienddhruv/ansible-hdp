@@ -255,7 +255,27 @@
       "configurations" : [ ],
       "components" : [
         {
+          "name" : "HDFS_CLIENT"
+        },
+        {
+          "name" : "YARN_CLIENT"
+        },
+        {
+          "name" : "MAPREDUCE2_CLIENT"
+        },
+        {
           "name" : "ZOOKEEPER_SERVER"
+        },
+        {% if hdfs.ha_namenode -%}
+        {
+          "name" : "JOURNALNODE"
+        },
+        {
+          "name" : "ZKFC"
+        },
+        {% endif -%}
+        {
+          "name" : "NAMENODE"
         },
         {% if install_flume == true -%}
         {
@@ -284,6 +304,21 @@
       "configurations" : [ ],
       "components" : [
         {
+          "name" : "HDFS_CLIENT"
+        },
+        {
+          "name" : "YARN_CLIENT"
+        },
+        {
+          "name" : "MAPREDUCE2_CLIENT"
+        },
+        {
+          "name" : "NODEMANAGER"
+        },
+        {
+          "name" : "DATANODE"
+        },
+        {
           "name" : "METRICS_MONITOR"
         },
         {
@@ -299,6 +334,15 @@
       "name" : "masternode_3",
       "configurations" : [ ],
       "components" : [
+        {
+          "name" : "HDFS_CLIENT"
+        },
+        {
+          "name" : "YARN_CLIENT"
+        },
+        {
+          "name" : "MAPREDUCE2_CLIENT"
+        },
         {
           "name" : "ZOOKEEPER_SERVER"
         },
@@ -330,6 +374,11 @@
         {
           "name" : "LOGSEARCH_SERVER"
         },
+        {% if hdfs.ha_namenode -%}
+        {
+          "name" : "JOURNALNODE"
+        },
+        {% endif -%}
         {% if install_flume == true -%}
         {
           "name" : "FLUME_HANDLER"
@@ -352,6 +401,15 @@
       "name" : "edgenode",
       "configurations" : [ ],
       "components" : [
+        {
+          "name" : "HDFS_CLIENT"
+        },
+        {
+          "name" : "YARN_CLIENT"
+        },
+        {
+          "name" : "MAPREDUCE2_CLIENT"
+        },
         {% if install_flume == true -%}
         {
           "name" : "FLUME_HANDLER"
@@ -375,11 +433,38 @@
       "configurations" : [ ],
       "components" : [
         {
+          "name" : "HDFS_CLIENT"
+        },
+        {
+          "name" : "YARN_CLIENT"
+        },
+        {
+          "name" : "MAPREDUCE2_CLIENT"
+        },
+        {
           "name" : "ZOOKEEPER_SERVER"
         },
         {% if install_kafka == true -%}
         {
           "name" : "KAFKA_BROKER"
+        },
+        {% endif -%}
+        {
+          "name" : "HISTORYSERVER"
+        },
+        {% if hdfs.ha_namenode -%}
+        {
+          "name" : "JOURNALNODE"
+        },
+        {
+          "name" : "ZKFC"
+        },
+        {
+          "name" : "NAMENODE"
+        },
+        {% else %}
+        {
+          "name" : "SECONDARY_NAMENODE"
         },
         {% endif -%}
         {% if install_flume == true -%}
@@ -392,6 +477,12 @@
         },
         {
           "name" : "LOGSEARCH_LOGFEEDER"
+        },
+        {
+          "name" : "APP_TIMELINE_SERVER"
+        },
+        {
+          "name" : "RESOURCEMANAGER"
         },
         {
            "name" : "ZOOKEEPER_CLIENT"

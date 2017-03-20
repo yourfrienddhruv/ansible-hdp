@@ -1,6 +1,6 @@
 ---
 cluster_name: 'DRS'
-adminnode: 'ambari-node' 
+#adminnode: 'ambari-node'
 hdp_version: '2.5'
 ambari_version: '2.4.2.0'
 admin_password: 'admin'
@@ -14,7 +14,7 @@ install_zeppelin: false # >= HDP2_5
 install_flume: false
 install_hbase: false
 install_storm: false
-install_kafka: true
+install_kafka: false
 
 data_disks_filesystem: xfs
 configure_firewall: false
