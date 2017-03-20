@@ -239,51 +239,16 @@
           "name" : "ZOOKEEPER_CLIENT"
         },
         {
-          "name" : "PIG"
-        },
-        {
-          "name" : "OOZIE_CLIENT"
-        },
-        {
-          "name" : "SQOOP"
-        },
-        {
-          "name" : "HIVE_CLIENT"
-        },
-        {
           "name" : "HDFS_CLIENT"
         },
         {
           "name" : "YARN_CLIENT"
         },
         {
-          "name" : "HCAT"
-        },
-        {
           "name" : "MAPREDUCE2_CLIENT"
         },
         {
-          "name" : "TEZ_CLIENT"
-        },
-        {% if install_falcon == true -%}
-        {
-          "name" : "FALCON_CLIENT"
-        },
-        {% endif -%}
-        {
-          "name" : "SLIDER"
-        },
-        {
           "name" : "ZOOKEEPER_SERVER"
-        },
-        {
-          "name" : "HIVE_METASTORE"
-        },
-        {
-          "name" : "WEBHCAT_SERVER"
-        },
-        {
-          "name" : "MYSQL_SERVER"
         },
         {% if hdfs.ha_namenode -%}
         {
@@ -337,9 +302,6 @@
           "name" : "LOGSEARCH_LOGFEEDER"
         },
         {% endif -%}
-        {
-          "name" : "HIVE_SERVER"
-        }
       ],
       "cardinality" : "1"
     },
@@ -351,31 +313,13 @@
           "name" : "ZOOKEEPER_CLIENT"
         },
         {
-          "name" : "PIG"
-        },
-        {
-          "name" : "OOZIE_CLIENT"
-        },
-        {
-          "name" : "SQOOP"
-        },
-        {
-          "name" : "HIVE_CLIENT"
-        },
-        {
           "name" : "HDFS_CLIENT"
         },
         {
           "name" : "YARN_CLIENT"
         },
         {
-          "name" : "HCAT"
-        },
-        {
           "name" : "MAPREDUCE2_CLIENT"
-        },
-        {
-          "name" : "SLIDER"
         },
         {% if install_spark == true -%}
         {
@@ -390,11 +334,6 @@
         {% if install_storm == true -%}
         {
           "name" : "SUPERVISOR"
-        },
-        {% endif -%}
-        {% if install_falcon == true -%}
-        {
-          "name" : "FALCON_CLIENT"
         },
         {% endif -%}
         {
@@ -418,9 +357,6 @@
           "name" : "LOGSEARCH_LOGFEEDER"
         },
         {% endif -%}
-        {
-          "name" : "TEZ_CLIENT"
-        }
       ],
       "cardinality" : "{{ groups['slave-nodes']|length }}"
     },
@@ -432,34 +368,13 @@
           "name" : "ZOOKEEPER_CLIENT"
         },
         {
-          "name" : "PIG"
-        },
-        {
-          "name" : "OOZIE_CLIENT"
-        },
-        {
-          "name" : "SQOOP"
-        },
-        {
-          "name" : "HIVE_CLIENT"
-        },
-        {
           "name" : "HDFS_CLIENT"
         },
         {
           "name" : "YARN_CLIENT"
         },
         {
-          "name" : "HCAT"
-        },
-        {
           "name" : "MAPREDUCE2_CLIENT"
-        },
-        {
-          "name" : "TEZ_CLIENT"
-        },
-        {
-          "name" : "SLIDER"
         },
         {
           "name" : "ZOOKEEPER_SERVER"
@@ -516,14 +431,6 @@
           "name" : "HBASE_CLIENT"
         },
         {% endif -%}
-        {% if install_falcon == true -%}
-        {
-          "name" : "FALCON_SERVER"
-        },
-        {
-          "name" : "FALCON_CLIENT"
-        },
-        {% endif -%}
         {% if  ambari_version >= "2.2.2" -%}
         {
           "name" : "METRICS_MONITOR"
@@ -534,9 +441,6 @@
           "name" : "LOGSEARCH_LOGFEEDER"
         },
         {% endif -%}
-        {
-          "name" : "OOZIE_SERVER"
-        }
       ],
       "cardinality" : "1"
     },
@@ -549,31 +453,13 @@
           "name" : "ZOOKEEPER_CLIENT"
         },
         {
-          "name" : "PIG"
-        },
-        {
-          "name" : "OOZIE_CLIENT"
-        },
-        {
-          "name" : "SQOOP"
-        },
-        {
-          "name" : "HIVE_CLIENT"
-        },
-        {
           "name" : "HDFS_CLIENT"
         },
         {
           "name" : "YARN_CLIENT"
         },
         {
-          "name" : "HCAT"
-        },
-        {
           "name" : "MAPREDUCE2_CLIENT"
-        },
-        {
-          "name" : "TEZ_CLIENT"
         },
         {% if install_flume == true -%}
         {
@@ -595,11 +481,6 @@
           "name" : "SUPERVISOR"
         },
         {% endif -%}
-        {% if install_falcon == true -%}
-        {
-          "name" : "FALCON_CLIENT"
-        },
-        {% endif -%}
         {% if  ambari_version >= "2.2.2" -%}
         {
           "name" : "METRICS_MONITOR"
@@ -610,9 +491,6 @@
           "name" : "LOGSEARCH_LOGFEEDER"
         },
         {% endif -%}
-        {
-          "name" : "SLIDER"
-        }
       ],
       "cardinality" : "{{ groups['edge-nodes']|length }}"
     },
@@ -625,39 +503,13 @@
           "name" : "ZOOKEEPER_CLIENT"
         },
         {
-          "name" : "PIG"
-        },
-        {
-          "name" : "OOZIE_CLIENT"
-        },
-        {
-          "name" : "SQOOP"
-        },
-        {
-          "name" : "HIVE_CLIENT"
-        },
-        {
           "name" : "HDFS_CLIENT"
         },
         {
           "name" : "YARN_CLIENT"
         },
         {
-          "name" : "HCAT"
-        },
-        {
           "name" : "MAPREDUCE2_CLIENT"
-        },
-        {
-          "name" : "TEZ_CLIENT"
-        },
-        {% if install_falcon == true -%}
-        {
-          "name" : "FALCON_CLIENT"
-        },
-        {% endif -%}
-        {
-          "name" : "SLIDER"
         },
         {
           "name" : "ZOOKEEPER_SERVER"

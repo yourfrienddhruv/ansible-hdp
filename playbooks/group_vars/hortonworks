@@ -15,7 +15,6 @@ install_flume: false
 install_hbase: false
 install_storm: false
 install_kafka: true
-install_falcon: false
 
 data_disks_filesystem: xfs
 configure_firewall: false

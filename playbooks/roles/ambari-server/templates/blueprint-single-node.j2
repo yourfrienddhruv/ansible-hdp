@@ -336,34 +336,13 @@
           "name" : "ZOOKEEPER_CLIENT"
         },
         {
-          "name" : "PIG"
-        },
-        {
-          "name" : "OOZIE_CLIENT"
-        },
-        {
-          "name" : "SQOOP"
-        },
-        {
-          "name" : "HIVE_CLIENT"
-        },
-        {
           "name" : "HDFS_CLIENT"
         },
         {
           "name" : "YARN_CLIENT"
         },
         {
-          "name" : "HCAT"
-        },
-        {
           "name" : "MAPREDUCE2_CLIENT"
-        },
-        {
-          "name" : "TEZ_CLIENT"
-        },
-        {
-          "name" : "SLIDER"
         },
         {
           "name" : "ZOOKEEPER_SERVER"
@@ -403,22 +382,7 @@
           "name" : "RESOURCEMANAGER"
         },
         {
-          "name" : "HIVE_SERVER"
-        },
-        {
-          "name" : "HIVE_METASTORE"
-        },
-        {
-          "name" : "WEBHCAT_SERVER"
-        },
-        {
-          "name" : "MYSQL_SERVER"
-        },
-        {
           "name" : "NAMENODE"
-        },
-        {
-          "name" : "OOZIE_SERVER"
         },
         {
           "name" : "NODEMANAGER"
@@ -472,14 +436,6 @@
         {% if install_zeppelin == true -%}
         {
           "name" : "ZEPPELIN_MASTER"
-        },
-        {% endif -%}
-        {% if install_falcon == true -%}
-        {
-          "name" : "FALCON_SERVER"
-        },
-        {
-          "name" : "FALCON_CLIENT"
         },
         {% endif -%}
         {% if  ambari_version >= "2.2.2" -%}
