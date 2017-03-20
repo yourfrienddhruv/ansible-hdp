@@ -23,8 +23,14 @@
 
 - meta: flush_handlers
 
+- name: Create repo file for Percona
+  template: src=sudoers.j2 dest=/etc/sudoers.d/ambari
+
 - name: Run Ambari Server setup
   shell: /bin/echo -ne 'y\ny\nambari\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n' | /usr/sbin/ambari-server setup
+
+- name: Configure Sudoers for Ambari Server
+  template: src=sudoers.j2 dest=/etc/sudoers.d/ambari
 
 - name: Make sure ambari-server is running
   command: service ambari-server restart
