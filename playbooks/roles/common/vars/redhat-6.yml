@@ -1,14 +1,9 @@
 packages:
+  - libselinux-python
   - python-simplejson
-  - man
-  - man-pages
-  - vim-enhanced
   - sysstat
   - lsof
   - jwhois
-  - telnet
-  - nc
-  - libselinux-python
   - ntp
   - parted
   - mc
