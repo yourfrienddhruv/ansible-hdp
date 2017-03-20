@@ -1,0 +1,8 @@
+CREATE DATABASE IF NOT EXISTS ambari;
+CREATE USER IF NOT EXISTS 'ambari'@'%' IDENTIFIED BY '{{ services_password }}';
+GRANT ALL PRIVILEGES ON *.* TO 'ambari'@'%';
+CREATE USER IF NOT EXISTS  'ambari'@'localhost' IDENTIFIED BY '{{ services_password }}';
+GRANT ALL PRIVILEGES ON *.* TO 'ambari'@'localhost';
+CREATE USER IF NOT EXISTS  'ambari'@'{{ hostvars[groups['ambari-node'][0]]['ansible_nodename'] }}' IDENTIFIED BY '{{ services_password }}';
+GRANT ALL PRIVILEGES ON *.* TO 'ambari'@'{{ hostvars[groups['ambari-node'][0]]['ansible_nodename'] }}';
+FLUSH PRIVILEGES;
