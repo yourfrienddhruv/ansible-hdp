@@ -21,10 +21,6 @@
       register: hadoop_cluster    
       when: "'hadoop-cluster' not in groups or groups['hadoop-cluster']|length < 1"
 
-    - name: "include hdp vars"
-      include_vars: group_vars/hortonworks
-      when: distro == "hdp"
-
     - name: Add the last masternode to ambari-node variable group
       always_run: yes
       add_host:
