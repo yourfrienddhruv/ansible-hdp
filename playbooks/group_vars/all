@@ -1,5 +1,7 @@
 ---
 cluster_name: 'DRS'
+#following named file must exist at playbooks/roles/ambari-server/files/
+ambari_stack_package: release-3.3.0-SNAPSHOT-ambari-stack.tar.gz
 use_dns: false
 dnsfwd: ['173.203.4.8', '173.203.4.9']
 dnsres: ['173.203.4.8', '173.203.4.9']

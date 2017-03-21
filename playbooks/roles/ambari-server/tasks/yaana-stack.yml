@@ -1,0 +1,15 @@
+---
+- name: Install custom ambari-stack
+  copy: src={{ ambari_stack_package }} dest=/var/lib/ambari-server/ owner=ambari group=root
+
+- name: Extract custom ambari-stack
+  become: true
+  become_user: ambari
+  shell: tar --no-overwrite-dir -xzvf release-3.3.0-SNAPSHOT-ambari-stack.tar.gz
+  args:
+    chdir: /var/lib/ambari-server
+
+- name: Restart ambari-server
+  become: true
+  become_user: ambari
+  service: name=ambari-server state=restarted
