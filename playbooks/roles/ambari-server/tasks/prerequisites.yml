@@ -9,6 +9,39 @@
   notify: Reload systemd
   when: ansible_os_family == "RedHat"
 
+- name: Configure percona repo
+  template: src=percona-release.repo.j2 dest=/etc/yum.repos.d/percona-release.repo
+
+- name: Install Percona-Server-server
+  yum:
+    name: Percona-Server-server-57
+    state: present
+    update_cache: yes
+  ignore_errors: true
+  when: ansible_os_family == "RedHat"
+
+- name: Install mysql-connector-java latest version
+  copy: src=mysql-connector-java-5.1.41-bin.jar dest=/usr/share/java/
+
+- name: Configure mysql-connector-java to be used for ambari
+  file:
+    src: /usr/share/java/mysql-connector-java-5.1.41-bin.jar
+    dest: /usr/share/java/mysql-connector-java.jar
+    mode: 0644
+    state: link
+
+- name: Create mysql bootstrap file that will create ambari user
+  template: src=mysql-init.j2 dest=/tmp/mysql-init owner=mysql group=mysql
+
+- name: Configure mysql-init file
+  lineinfile: dest=/etc/percona-server.conf.d/mysqld.cnf
+              regexp='^init-file\s*='
+              line='init-file=/tmp/mysql-init'
+              state=present
+
+- name: Start mysql service
+  command: service mysql start
+
 - name: Ensure required packages are installed (apt)
   apt:
     name: "{{ item }}"
@@ -18,14 +51,30 @@
     - ambari-server
   when: ansible_os_family == "Debian"
 
+- name: Create ambari db and schema
+  shell: mysql -hlocalhost -P3306 -uambari -p{{ services_password }} ambari < /var/lib/ambari-server/resources/Ambari-DDL-MySQL-CREATE.sql
+  args :
+    creates : /var/lib/mysql/ambari/stack.ibd
+
 - include: unbound-dns.yml
   when: use_dns
 
 - meta: flush_handlers
 
-- name: Run Ambari Server setup
-  shell: /bin/ec ho -ne 'y\ny\nambari\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n' | /usr/sbin/ambari-server setup
-#  shell: /bin/echo -ne 'y\ny\nambari\n\ny\n3\nlocalhost\n3306\nambari\nambari\n{{ services_password }}\n\n\n\n\n' | /usr/sbin/ambari-server setup
+- name: Default Ambari Server setup for JDK and non-root server installation
+  shell: /bin/echo -ne '\ny\nambari\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n' | /usr/sbin/ambari-server setup
+
+- name: Configure MySQL as DB for Ambari Server
+  shell: /usr/sbin/ambari-server setup --silent --database mysql --databasehost localhost --databaseport 3306 --databasename ambari --databaseusername ambari --databasepassword {{ services_password }}
+
+- name: For safetly lookup mysql on local interface ONLY (ambari-setup uses hostname)
+  lineinfile: dest=/etc/ambari-server/conf/ambari.properties
+              regexp='^server.jdbc.url\s*='
+              line='server.jdbc.url=jdbc:mysql://localhost:3306/ambari'
+              state=present
+
+- name: Ensure default postgreSql for ambari-server is STOPPED
+  command: service postgresql stop
 
 - name: Configure Sudoers for Ambari Server
   template: src=sudoers.j2 dest=/etc/sudoers.d/ambari

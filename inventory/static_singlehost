@@ -1,0 +1,11 @@
+[ambari-node]
+c6410 ansible_host=c6410.ambari.apache.org bond_ip=192.168.64.110 ansible_user=vagrant
+
+[master-nodes]
+c6410 ansible_host=c6410.ambari.apache.org bond_ip=192.168.64.110 ansible_user=vagrant
+
+[slave-nodes]
+c6410 ansible_host=c6410.ambari.apache.org bond_ip=192.168.64.110 ansible_user=vagrant
+
+[edge-nodes]
+#edge01 ansible_host=192.168.0.5 bond_ip=172.16.0.5 ansible_user=rack ansible_ssh_pass=changeme
