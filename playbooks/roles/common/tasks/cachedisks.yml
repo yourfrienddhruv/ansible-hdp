@@ -1,9 +1,9 @@
 ---
-- name: copy intel tools rpm
-  copy: src=isdct-3.0.2.400-17.x86_64.rpm dest=/tmp
+#- name: copy intel tools rpm
+#  copy: src=isdct-3.0.2.400-17.x86_64.rpm dest=/tmp
 
-- name: install intel tools
-  yum: pkg=/tmp/isdct-3.0.2.400-17.x86_64.rpm state=present
+#- name: install intel tools
+#  yum: pkg=/tmp/isdct-3.0.2.400-17.x86_64.rpm state=present
 
 - name: software raid - check existing raid devices
   shell: "mdadm -D {{ item }}"
