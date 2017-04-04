@@ -1,0 +1,118 @@
+---
+- name: create certificate dir
+  file:
+    dest: "/etc/ambari-server/ssl"
+    owner: ambari-server
+    group: ambari-server
+    mode: 0600
+    state: directory
+
+- name: Fetch JAVA_HOME from ambari.properties
+  become: true
+  become_user: ambari-server
+  shell: cat /etc/ambari-server/conf/ambari.properties |grep -Po '(?<=java.home=).*'
+  register: java_home
+
+- name: Generate CA's key pair
+  become: true
+  become_user: ambari-server
+  shell: 'DNAME_CA="CN=yaanatech.net,OU=Unknown,O=Yaana Technologies,L=Milpitas,ST=CA,C=US";{{ java_home.stdout }}/jre/bin/keytool -genkey -alias ca -ext BC=ca:true -dname "$DNAME_CA" -keyalg RSA -keysize 4096 -sigalg SHA512withRSA -keypass changeit -validity 3650 -keystore ca-keystore.jks -storepass changeit'
+  args:
+    chdir: /etc/ambari-server/ssl
+    creates: /etc/ambari-server/ssl/ca-keystore.jks
+
+- name: Create CA certificate
+  become: true
+  become_user: ambari-server
+  shell: '{{ java_home.stdout }}/jre/bin/keytool -export -alias ca -file ca.crt -rfc -keystore ca-keystore.jks -storepass changeit'
+  args:
+    chdir: /etc/ambari-server/ssl
+    creates: /etc/ambari-server/ssl/ca.crt
+
+- name: Generate ambari server's key pair
+  become: true
+  become_user: ambari-server
+  shell: 'DNAME_HOST="CN={{ ansible_nodename }},OU=Unknown,O=Yaana Technologies,L=Milpitas,ST=CA,C=US";{{ java_home.stdout }}/jre/bin/keytool -genkey -alias server -dname "$DNAME_HOST" -keyalg RSA -keysize 4096 -sigalg SHA512withRSA -keypass changeit -validity 3650 -keystore keystore.jks -storepass changeit'
+  args:
+    chdir: /etc/ambari-server/ssl
+    creates: /etc/ambari-server/ssl/keystore.jks
+
+- name: Generate CSR
+  become: true
+  become_user: ambari-server
+  shell: '{{ java_home.stdout }}/jre/bin/keytool -certreq -alias server -ext BC=ca:true -keyalg RSA -keysize 4096 -sigalg SHA512withRSA -keypass changeit -validity 3650 -keystore keystore.jks -storepass changeit -file request.csr'
+  args:
+    chdir: /etc/ambari-server/ssl
+    creates: /etc/ambari-server/ssl/request.csr
+
+- name: Generate Certificate
+  become: true
+  become_user: ambari-server
+  shell: '{{ java_home.stdout }}/jre/bin/keytool -gencert -alias ca -validity 3650 -sigalg SHA512withRSA -infile request.csr -outfile response.crt -rfc -keystore ca-keystore.jks -storepass changeit'
+  args:
+    chdir: /etc/ambari-server/ssl
+    creates: /etc/ambari-server/ssl/response.crt
+
+- name: Convert server keystore to pkcs12 format
+  become: true
+  become_user: ambari-server
+  shell: '{{ java_home.stdout }}/jre/bin/keytool -importkeystore -srckeystore keystore.jks -srcstorepass changeit -destkeystore pkcs12 -srcstoretype jks -deststoretype pkcs12 -destkeypass changeit -deststorepass changeit'
+  args:
+    chdir: /etc/ambari-server/ssl
+    creates: /etc/ambari-server/ssl/pkcs12
+
+- name: Import CA into keystore
+  become: true
+  become_user: ambari-server
+  shell: '{{ java_home.stdout }}/jre/bin/keytool -import -trustcacerts -noprompt -alias ca -file ca.crt -keypass changeit -keystore keystore.jks -storepass changeit'
+  args:
+    chdir: /etc/ambari-server/ssl
+    creates: /etc/ambari-server/ssl/ca.crt
+
+- name: Import CSR response
+  become: true
+  become_user: ambari-server
+  shell: '{{ java_home.stdout }}/jre/bin/keytool -import -trustcacerts -alias server -file response.crt -keypass changeit -keystore keystore.jks -storepass changeit'
+  args:
+    chdir: /etc/ambari-server/ssl
+    creates: /etc/ambari-server/ssl/response.crt
+
+- name: Convert server cert to pem format
+  become: true
+  become_user: ambari-server
+  shell: openssl x509 -inform pem -in response.crt -out ca.pem
+  args:
+    chdir: /etc/ambari-server/ssl
+    creates: /etc/ambari-server/ssl/ca.pem
+
+- name: Convert server keystore to pem format
+  become: true
+  become_user: ambari-server
+  shell: openssl pkcs12 -in pkcs12 -out server-key.pem -passin pass:changeit -passout pass:changeit
+  args:
+    chdir: /etc/ambari-server/ssl
+    creates: /etc/ambari-server/ssl/server-key.pem
+
+- name: Import CA into truststore
+  become: true
+  become_user: ambari-server
+  shell: '{{ java_home.stdout }}/jre/bin/keytool -import -trustcacerts -noprompt -file ca.crt -alias ambari-server -keystore ambari-server-truststore -storepass changeit'
+  args:
+    chdir: /etc/ambari-server/ssl
+    creates: /etc/ambari-server/ssl/ambari-server-truststore
+
+- name: Enable HTTPS for ambari-server
+  shell: /bin/sleep 5 && /bin/echo -ne "1\ny\n8080\n/etc/ambari-server/ssl/ca.pem\n/etc/ambari-server/ssl/server-key.pem\nchangeit\n\n\n\n\n\n\n\n\n\n\n\n" | /usr/sbin/ambari-server setup-security
+  args:
+    creates: /etc/ambari-server/ssl/ambari-server-ssl-enabled
+
+- name: Create file for marking HTTPS enabled for ambari-server
+  template: src=ambari-server-ssl-enabled.j2 dest=/etc/ambari-server/ssl/ambari-server-ssl-enabled
+
+- name: Setup truststore for ambari-server
+  shell: /bin/sleep 5 && /bin/echo -ne '4\ny\njks\n/etc/ambari-server/ssl/ambari-server-truststore\nchangeit\nchangeit\n\n\n\n\n\n\n\n\n\n\n\n' | /usr/sbin/ambari-server setup-security
+  args:
+    creates: /etc/ambari-server/ssl/truststore-configured
+
+- name: Create file for marking truststore configured for ambari-server
+  template: src=truststore-configured.j2 dest=/etc/ambari-server/ssl/truststore-configured

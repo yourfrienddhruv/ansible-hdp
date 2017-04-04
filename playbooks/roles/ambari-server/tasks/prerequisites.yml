@@ -59,10 +59,8 @@
 - include: unbound-dns.yml
   when: use_dns
 
-- meta: flush_handlers
-
 - name: Default Ambari Server setup for JDK and non-root server installation
-  shell: /bin/echo -ne '\ny\nambari\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n' | /usr/sbin/ambari-server setup
+  shell: /bin/echo -ne '\ny\nambari-server\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n' | /usr/sbin/ambari-server setup
 
 - name: Configure MySQL as DB for Ambari Server
   shell: /usr/sbin/ambari-server setup --silent --database mysql --databasehost localhost --databaseport 3306 --databasename ambari --databaseusername ambari --databasepassword {{ services_password }}
@@ -77,7 +75,9 @@
   command: service postgresql stop
 
 - name: Configure Sudoers for Ambari Server
-  template: src=sudoers.j2 dest=/etc/sudoers.d/ambari
+  template: src=sudoers.j2 dest=/etc/sudoers.d/ambari-server
+
+- include: ambari-ssl.yml
 
 - name: Make sure ambari-server is running
   command: service ambari-server restart
