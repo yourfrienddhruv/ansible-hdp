@@ -27,7 +27,7 @@
   when: custom_repo
 
 - name: Modify repo base_url
-  uri: url=http://{{ ansible_nodename }}:8080/{{ custom_repo_target }}
+  uri: url={{ambari_deployment_mode}}://{{ ansible_nodename }}:8080/{{ custom_repo_target }}
        method=PUT
        force_basic_auth=yes
        user=admin
@@ -46,7 +46,7 @@
   register: alert_targets
 
 - name: Check if alert_targets already exists
-  uri: url=http://{{ ansible_nodename }}:8080/api/v1/alert_targets
+  uri: url={{ambari_deployment_mode}}://{{ ansible_nodename }}:8080/api/v1/alert_targets
        method=GET
        force_basic_auth=yes
        user=admin
@@ -57,7 +57,7 @@
   register: current_alert_targets
 
 - name: Register the alert_targets with the Ambari server
-  uri: url=http://{{ ansible_nodename }}:8080/api/v1/alert_targets
+  uri: url={{ambari_deployment_mode}}://{{ ansible_nodename }}:8080/api/v1/alert_targets
        method=POST
        force_basic_auth=yes
        user=admin
@@ -73,7 +73,7 @@
   register: cluster_blueprint
 
 - name: Make sure the blueprint doesn't already exist
-  uri: url=http://{{ ansible_nodename }}:8080/api/v1/blueprints/cluster_blueprint
+  uri: url={{ambari_deployment_mode}}://{{ ansible_nodename }}:8080/api/v1/blueprints/cluster_blueprint
        method=DELETE
        force_basic_auth=yes
        user=admin
@@ -83,7 +83,7 @@
   ignore_errors: true
 
 - name: Register the blueprint with the Ambari server
-  uri: url=http://{{ ansible_nodename }}:8080/api/v1/blueprints/cluster_blueprint
+  uri: url={{ambari_deployment_mode}}://{{ ansible_nodename }}:8080/api/v1/blueprints/cluster_blueprint
        method=POST
        force_basic_auth=yes
        user=admin
@@ -98,7 +98,7 @@
   register: cluster_template
 
 - name: Check if a cluster {{ cluster_name }} already exists
-  uri: url=http://{{ ansible_nodename }}:8080/api/v1/clusters/{{ cluster_name }}
+  uri: url={{ambari_deployment_mode}}://{{ ansible_nodename }}:8080/api/v1/clusters/{{ cluster_name }}
        method=GET
        force_basic_auth=yes
        user=admin
@@ -108,7 +108,7 @@
   register: current_cluster
 
 - name: Create the cluster instance
-  uri: url=http://{{ ansible_nodename }}:8080/api/v1/clusters/{{ cluster_name }}
+  uri: url={{ambari_deployment_mode}}://{{ ansible_nodename }}:8080/api/v1/clusters/{{ cluster_name }}
        method=POST
        force_basic_auth=yes
        user=admin
@@ -120,7 +120,7 @@
   when: current_cluster.status==404
 
 - name: Wait for the cluster to be built
-  uri: url=http://{{ ansible_nodename }}:8080/api/v1/clusters/{{ cluster_name }}/requests/1
+  uri: url={{ambari_deployment_mode}}://{{ ansible_nodename }}:8080/api/v1/clusters/{{ cluster_name }}/requests/1
        method=GET
        force_basic_auth=yes
        user=admin
@@ -145,7 +145,7 @@
          (cluster_create_task.content|from_json).Requests.request_status == 'ABORTED')
 
 - name: Change Ambari admin user password
-  uri: url=http://{{ ansible_nodename }}:8080/api/v1/users/admin
+  uri: url={{ambari_deployment_mode}}://{{ ansible_nodename }}:8080/api/v1/users/admin
        method=PUT
        force_basic_auth=yes
        user=admin

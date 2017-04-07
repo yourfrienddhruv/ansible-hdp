@@ -10,6 +10,4 @@
     chdir: /var/lib/ambari-server
 
 - name: Restart ambari-server
-  become: true
-  become_user: ambari-server
   service: name=ambari-server state=restarted

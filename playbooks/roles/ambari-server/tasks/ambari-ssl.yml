@@ -107,7 +107,7 @@
     creates: /etc/ambari-server/ssl/ambari-server-ssl-enabled
 
 - name: Create file for marking HTTPS enabled for ambari-server
-  template: src=ambari-server-ssl-enabled.j2 dest=/etc/ambari-server/ssl/ambari-server-ssl-enabled
+  template: src=ambari-server-ssl-enabled.j2 dest=/etc/ambari-server/ssl/ambari-server-ssl-enabled owner=ambari-server
 
 - name: Setup truststore for ambari-server
   shell: /bin/sleep 5 && /bin/echo -ne '4\ny\njks\n/etc/ambari-server/ssl/ambari-server-truststore\nchangeit\nchangeit\n\n\n\n\n\n\n\n\n\n\n\n' | /usr/sbin/ambari-server setup-security
@@ -115,4 +115,4 @@
     creates: /etc/ambari-server/ssl/truststore-configured
 
 - name: Create file for marking truststore configured for ambari-server
-  template: src=truststore-configured.j2 dest=/etc/ambari-server/ssl/truststore-configured
+  template: src=truststore-configured.j2 dest=/etc/ambari-server/ssl/truststore-configured owner=ambari-server

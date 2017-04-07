@@ -60,7 +60,7 @@
   when: use_dns
 
 - name: Default Ambari Server setup for JDK and non-root server installation
-  shell: /bin/echo -ne '\ny\nambari-server\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n' | /usr/sbin/ambari-server setup
+  shell: /bin/echo -ne 'y\nambari-server\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n' | /usr/sbin/ambari-server setup
 
 - name: Configure MySQL as DB for Ambari Server
   shell: /usr/sbin/ambari-server setup --silent --database mysql --databasehost localhost --databaseport 3306 --databasename ambari --databaseusername ambari --databasepassword {{ services_password }}
@@ -78,15 +78,16 @@
   template: src=sudoers.j2 dest=/etc/sudoers.d/ambari-server
 
 - include: ambari-ssl.yml
+  when: ambari_deployment_mode == 'https'
 
 - name: Make sure ambari-server is running
-  command: service ambari-server restart
+  service: name=ambari-server state=restarted
 
 - name: Waiting for ambari-server to start listening on port 8080
   wait_for: host={{ ansible_nodename }} port=8080
 
 - name: Waiting for ambari-agents to register
-  uri: url=http://{{ ansible_nodename }}:8080/api/v1/hosts/{{ hostvars[item]['ansible_nodename'] | lower }}
+  uri: url={{ambari_deployment_mode}}://{{ ansible_nodename }}:8080/api/v1/hosts/{{ hostvars[item]['ansible_nodename'] | lower }}
        method=GET
        force_basic_auth=yes
        user=admin
